@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Campo Minado</title>
+	<meta http-equiv="content-type" content="text/html;charset=utf-8" />
+	<meta name="generator" content="Geany 1.22" />
+	<script src='jquery-1.7.min.js' type='text/javascript'></script>
+	<script src='html2canvas.js' type='text/javascript'></script>
+	<script src='base64.js' type='text/javascript'></script>
+	<script src='canvas2image.js' type='text/javascript'></script>
+	<link href='joguinho.css' rel="stylesheet" type="text/css"/>
+</head>
+
+<body class='fx'>
+	<h1>Campo Minado</h1>
+	<p class='description'>Descubra todas as minas e sobreviva até a última jogada.</p>
+	
+	<p class='menu no-select'>
+		
+		<button class='new-game' title='Começar um novo jogo'>Novo</button>
+		<button class='tip' title='Ajudar no jogo ou abrir uma casa segura'>Dica</button>
+		<button class='toggle' data-target='options' title='Alterar tamanho, dificuldade e outras opções'>Opções</button>
+		<button class='toggle' data-target='help' title='Aprenda as regras do jogo'>Como jogar</button>
+
+<!--
+		<button class='loadGame' title='Carregar último jogo'>Abrir</button>
+		<button class='saveGame' title='Salvar jogo'>Salvar</button>
+-->
+
+	</p>
+	
+	<div id='options' class='options no-select block'>
+		<button class='close'>X</button><h2>Opções</h2>
+		<p>
+			Tamanho <small>(largura x altura)</small>:
+			<span class='option-select' id='size'></span>
+		</p>
+		<p>
+			Dificuldade <small>(minas)</small>:
+			<span class='option-select' id='dificulty'></span>
+		</p>
+		<ul>
+			<li>
+				<input type='checkbox' id='wrongFlags' class='check-option'/>
+				<label for='wrongFlags'>Alertas <br><small>Avisar quando eu marcar mais minas do que for possível.</small></label>
+			</li>
+			<li>
+				<input type='checkbox' id='noEffects' class='check-option' />
+				<label for='noEffects'>Visual leve<br><small>Desabilitar efeitos visuais para melhorar a performance do jogo.</small></label>
+			</li>
+			<li>
+				<input type='checkbox' id='localFlags' class='check-option' />
+				<label for='localFlags'>Modo Notebook <br><small>Mostrar a opção de "Marcar mina" quando eu passar o mouse sobre uma casa.</small></label>
+			</li>
+			<li>
+				<input type='checkbox' id='mineFind' class='check-option' />
+				<label for='mineFind'>Modo Mobile <br><small>Mostrar sempre a opção de "Marcar mina".</small></label>
+			</li>
+		</ul>
+	</div>
+
+	<div id='help' class='block'>
+		<button class='close'>X</button><h2>Como jogar</h2>
+		<ul>
+			<li>Uma casa no campo minado pode ser <strong>vazia</strong>, ter um <strong>número</strong> ou uma <strong>mina</strong>.</li>
+			<li>Casas vazias ou com números são <strong>seguras</strong> e podem ser abertas com um clique.</li>
+			<li>Casas com minas <strong>não devem</strong> ser abertas.</li>
+			<li>Cada <strong>número</strong> revela quantas minas há <strong>ao redor</strong> daquela casa (acima, abaixo, lados e diagonais).</li>
+			<li>Usando a informação dos números, tente descobrir se uma casa é segura ou tem uma mina.</li>
+			<li>Se suspeitar que uma casa contém uma mina, apenas clique com o <strong>botão direito</strong> para marcá-la.</li>
+			<li>É normal arriscar várias casa no começo do jogo, até que seja possível descobrir algo.</li>
+			<li>Se cair em uma mina, basta começar outro jogo.</li>
+			<li>O jogo termina quando todas as casas seguras forem abertas e todas as minas forem marcadas.</li>
+		</ul>
+	</div>
+	
+	<div class='block' id='savePhoto' class='no-select'>
+		<button class='close'>X</button><h2>Foto do jogo</h2>
+		<p>Clique com botão direito sobre a imagem para salvar.</p>
+		<div class='screenshot-canvas'></div>
+	</div>
+	
+	<p id='mineFindLink' class='no-select'>
+		<button class='mine-find' data-target='' title='Marcar ou desmarcar uma mina'>⚑<span class='label'> Marcar mina</span></button>
+	</p>
+
+	<div>
+		<div id='game' class='no-select'>
+			<span class='state'>
+				<span class='state-visible state-item warning1'>
+					<span class='progress'></span>
+					<span class='text'>
+						<strong id='visibleOpened' class='label'>0</strong> de <strong id='visibleTotal'>80</strong> casas seguras.
+					</span>
+				</span><span class='state-flags state-item error1'>
+					<span class='progress'></span>
+					<span class='text'>
+						<strong id='flagsUsed' class='label'>0</strong> de <strong id='flagsTotal'>20</strong> minas marcadas.</em></small>
+					</span>
+				</span>
+			</span>
+			
+			<div id='msg' class='msg-block no-select'>
+				<span class='msg-text msg-error-1'>Você marcou mais minas do que existem.</span>
+				<span class='msg-text msg-error-2'>Você marcou muitas minas vizinhas para esta(s) casa(s).</span>
+				<span class='msg-text msg-tip-1'>Dica: A casa em vermelho tem um ou mais vizinhos que só podem ser minas.</span>
+				<span class='msg-text msg-tip-2'>Dica: Todas as minas vizinhas foram marcadas para a casa em vermelho.<br> <strong>Se você marcou certo</strong>, os outros vizinhos <em>devem</em> ser seguros.</span>
+			</div>	
+			
+			<div id='end' class='msg-block no-select'>
+				<span class='msg-text msg-lose'>Por que não tenta outra vez? <button class='new-game'>Novo jogo</button></span>
+				<span class='msg-text msg-win'>Parabéns! Você venceu! <button class='toggle screenshot' data-target='savePhoto' title='Salva uma imagem do jogo'>Tirar foto</button> <button class='new-game'>Novo jogo</button></span>
+			</div>
+<!--
+			<div class='state'>
+				<small><em><strong class='info-label' id='visibleOpened'>0</strong> de <strong id='visibleTotal'>80</strong> casas seguras, <span class='state-space'></span><strong class='info-label' id='flagsUsed'>0</strong> de <strong id='flagsTotal'>20</strong> minas marcadas.</em></small>
+			</div>
+-->
+			
+			<div class='matrix'></div>
+		</div>
+	</div>
+	
+	<button class='mine-link' data-target=''>⚑<span class='label'> Marcar mina</span><span class='label-selected'> Desmarcar mina</span></button>
+	
+	<p class='credits'>desenvolvido por Paulo José</p>
+	<script src='joguinho.js' type='text/javascript'></script>
+</body>
+
+</html>

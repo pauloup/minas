@@ -1,0 +1,623 @@
+
+body {
+	text-align: center;
+	font-family: 'Ubuntu', sans-serif;
+	color: #666;
+	padding: 20px 0;
+	overflow-y: scroll;
+}
+
+h1 {
+	font-weight: normal;
+	font-size: 36px;
+	color: #1E90FF;
+	margin-bottom: 10px;
+}
+
+p.description {
+	color: #bbb;
+}
+
+#game {
+	display: inline-block;
+	padding: 20px;
+	margin: 0 auto 0;
+}
+
+.menu {
+	margin-top: 20px;
+}
+
+.matrix {
+	line-height: 50px;
+	font-size: 16px;
+	color: #666;
+	background: #D4D4D4;
+	margin: 0 auto 0;
+	display: inline-block;
+	padding: 15px;
+	border-radius: 0px 0px 5px 5px;
+	white-space: nowrap;
+}
+
+.fx .matrix {
+	box-shadow: 0 2px 0 0 rgba(0,0,0,0.05) inset;
+}
+
+.celula {
+	display: inline-block;
+	background: #E5E5E5;
+	border: 2px solid #fff;
+	width: 50px;
+	height: 50px;
+	margin: 0;
+	padding: 0;
+	border-radius: 27px;
+	text-align: center;
+}
+
+.fx .celula {
+	box-shadow: 0 0 0 1px #d5d5d5 inset;
+}
+
+.lose .celula.mine {
+	background: #F14027;
+	color: #fff;
+	border: 2px solid #eee;
+}
+
+.fx .lose .celula.mine {
+	box-shadow: 0 5px 10px 0px #C21A00 inset;
+	text-shadow: 0 1px #9C1500;
+}
+
+.win .celula.mine {
+	color: #fff;
+	background: #63D963;
+}
+
+.fx .win .celula.mine {
+	box-shadow: 0 0px 10px 0px #9CFF9C inset,
+				0 -15px 20px 0px #49B949 inset;
+	text-shadow: 0 -1px #49B949;
+}
+
+.win .celula,
+.lose .celula {
+	cursor: default;
+}
+
+.texto {
+	padding: 10px 2px 0;
+}
+
+
+.celula.visible,
+.lose .celula.flag:not(.mine) {
+	border: 2px solid #f7f7f7;
+	background: #fff;
+	color: #999;
+	cursor: default;
+}
+
+.fx .celula.visible,
+.fx .lose .celula.flag:not(.mine) {
+	box-shadow: 0 5px 7px 0px #f2f2f2 inset;
+	text-shadow: none;
+}
+
+.celula.hidden:not(.flag) {
+	cursor: pointer;
+}
+
+.celula.hidden.normal:hover {
+	border: 2px solid #f7f7f7;
+	background: #f7f7f7;
+}
+
+.fx .celula.hidden.normal:hover {
+	box-shadow: 0 0 10px 0px #fff inset,
+				0 -10px 20px 0px #ddd inset;
+}
+
+.fx .celula {
+	transition-property: color, background, box-shadow, text-shadow;
+	-webkit-transition-property: color, background, box-shadow, text-shadow;
+	transition-duration: 0.25s;
+	-webkit-transition-duration: 0.25s;
+	vertical-align: top;
+}
+
+.fx .celula:hover {
+	transition: all 0.1s;
+	vertical-align: top;
+}
+
+.celula.hidden.normal:active {
+	border: 2px solid #eee;
+	background: #eee;
+}
+
+.fx .celula.hidden.normal:active {
+	box-shadow: 0 5px 7px 0px #e5e5e5 inset;
+}
+
+.celula.flag {
+	color: #fff;
+	background: #FFA74A;
+}
+
+.fx .celula.flag {
+	box-shadow: 0 0px 10px 0px #FFE798 inset,
+				0 -15px 20px 0px #E45200 inset;
+	text-shadow: 0 -1px #C56C00;
+}
+
+.celula.flag.hidden {
+	cursor: crosshair;
+}
+
+.celula.visible.highlight {
+	color: #F26868;
+}
+
+.fx .celula.visible.highlight {
+	box-shadow: 0 0 0 5px rgba(255,0,0,0.5) inset,
+				0 3px 5px 5px #F2B7B7 inset;
+}
+
+body:not(.fx) .celula.visible.highlight {
+	border: 2px solid #F26868;
+}
+
+.fx .celula.hidden.highlight {
+	box-shadow: 0 0 0 5px rgba(255,167,74,1) inset,
+				0 3px 5px 5px rgba(255,167,74,0.5) inset;
+}
+
+body:not(.fx) .celula.hidden.highlight {
+	border: 2px solid #FFA74A;
+}
+
+.fx .celula.hidden.highlight-good {
+	box-shadow: 0 0 0 5px rgba(65,223,78,0.75) inset,
+				0 3px 5px 5px rgba(65,223,78,0.5) inset;
+}
+
+body:not(.fx) .celula.hidden.highlight-good {
+	border: 2px solid #41DF4E;
+}
+
+
+.state {
+	display: block;
+	background: #EDEDED;
+	margin: 0 auto 0;
+	border-radius: 5px 5px 0px 0px;
+	overflow: hidden;
+}
+
+.fx .state {
+	box-shadow: 0px -1px 0 #f5f5f5 inset,
+				0px 10px 20px #f5f5f5 inset;
+}
+
+.state-item {
+	position: relative;
+	display: inline-block;
+	width: 50%;
+	padding: 3px 0;
+	color: #666;
+}
+
+.state-item.error,
+.state-item.error.warning {
+	background: #FF5353;
+	color: #fff;
+}
+
+.state-item.good {
+	background: #63D963;
+	color: #fff;
+}
+
+.state-item.warning {
+	background: #FFA74A;
+	color: #fff;
+}
+
+.state-item .label {
+	background: #fff;
+	border-radius: 5px;
+	padding: 3px 7px;
+}
+
+.fx .state-item .label {
+	box-shadow: 0 -1px 0 1px rgba(0,0,0,0.05);
+	color: inherit;
+}
+
+.state-item.good .label {
+	color: #63D963;
+}
+
+.state-item.warning .label {
+	color: #FFA74A;
+}
+
+.state-item .text {
+	display: inline-block;
+	font-style: italic;
+	font-size: small;
+	padding: 8px 0;
+}
+
+.state-item .progress {
+	display: inline-block;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	height: 3px;
+	background: #b5b5b5;
+	width: 0;
+}
+
+.state-item.good .progress {
+	background: #39C948;
+}
+
+.state-item.warning .progress {
+	background: #E77D0D;
+}
+
+.state-item.error .progress {
+	background: #C91919;
+}
+
+.fx .state-item .progress {
+	box-shadow: 0 -1px 0 rgba(0,0,0,0.4),
+				0 -1px 0 rgba(255,255,255,0.5) inset;
+}
+
+.fx .state-item.good .progress {
+	box-shadow: 0 -1px 0 #2EB13C,
+				0 -1px 0 #34F234 inset;
+}
+
+.fx .state-item.error .progress {
+	box-shadow: 0 -1px 0 #710000,
+				0 -1px 0 #FFA7A7 inset;
+}
+
+.fx .state-item.warning .progress {
+	box-shadow: 0 -1px 0 #D36C00,
+				0 -1px 0 #FFBB73 inset;
+}
+
+.lose .state-item .progress {
+	background: #b5b5b5;
+}
+
+.state-flags {
+	border-left: 1px solid #ddd;
+	margin-left: -1px;
+}
+
+.state-flags.good {
+	border-left: 1px solid #5AC55A;
+}
+
+.state-flags.error {
+	border-left: 1px solid #B12525;
+}
+
+.state-flags.warning {
+	border-left: 1px solid #DD8F00;
+}
+
+.block {
+	font-size: small;
+	padding: 10px 20px 0px;
+	margin: 20px auto 5px;
+	width: 600px;
+	text-align: left;
+	border-top: 3px solid #f5f5f5;
+	line-height: 1.2em;
+}
+
+p {
+	margin: 10px 0 0;
+}
+
+.block h2 {
+	margin: 10px 0 10px;
+	font-size: 16px;
+	color: #0069D0;
+}
+
+.block ul {
+	font-size: small;
+	margin: 20px 0 20px;
+	padding: 0;
+	text-align: left;
+	list-style: none;
+}
+
+.block li {
+	margin: 15px 0 0;
+}
+
+.block input {
+	vertical-align: top;
+}
+
+.block label {
+	cursor: pointer;
+	display: inline-block;
+}
+
+.block label small {
+	color: #999;
+}
+
+.block label:hover {
+	color: #1E90FF;
+}
+
+.block input:checked ~ label {
+	color: #0069D0;
+}
+
+.block label:hover small,
+.block input:checked ~ label small {
+	color: #666;
+}
+
+#help,
+#options,
+#savePhoto,
+.msg-block {
+	display: none;
+}
+
+.msg-block .msg-text {
+	display: none;
+}
+
+.msg-block.win .msg-win, 
+.msg-block.lose .msg-lose, 
+.msg-block.error-1 .msg-error-1,
+.msg-block.error-2 .msg-error-2,
+.msg-block.tip-1 .msg-tip-1,
+.msg-block.tip-2 .msg-tip-2 {
+	display: block;
+}
+
+.msg-block.win,
+.msg-block.lose,
+.msg-block.error,
+.msg-block.tip {
+	padding: 10px 20px;
+	color: #fff;
+	font-size: 0.9em;
+}
+
+.msg-block.win {
+	background: #63D963;
+}
+
+.fx .msg-block.win {
+	box-shadow: 0px -1px #34F234 inset;
+}
+
+.msg-block.lose {
+	background: #EA3A36;
+}
+
+.fx .msg-block.lose {
+	box-shadow: 0px -1px #FFA6A4 inset; 
+}
+
+.msg-block.error {
+	background: #FFA74A;
+}
+
+.fx .msg-block.error {
+	box-shadow: 0px -1px #FFD8B6 inset; 
+}
+
+.msg-block.tip {
+	background: #1E90FF;
+}
+
+.fx .msg-block.tip {
+	box-shadow: 0px -1px #92C9FF inset; 
+}
+
+#game.win .matrix {
+	background: #AFE8AF;
+}
+
+#game.lose .matrix {
+	background: #FF9491;
+}
+
+.fx #game.lose .celula {
+	opacity: 0.9;
+}
+
+#game.mine-mode .matrix {
+	background: #F0C79E;
+}
+
+.fx #game.mine-mode .matrix {
+	background: #E4D8CC;
+	box-shadow: 0 0 0 5px #FFAB5F inset;
+}
+
+.credits {
+	font-size: small;
+	font-style: italic;
+	color: #ccc;
+	margin-top: 40px
+}
+
+button {
+	background: #fff;
+	color: #666;
+	border: none;
+	padding: 7px 10px;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 0 2px;
+	font-family: 'Ubuntu', sans-serif;
+}
+
+.fx button {
+	border: none;
+	box-shadow: 0 0 0 1px #f5f5f5 inset,
+				0 0 0 2px #fff inset,
+				0 -5px 30px #f5f5f5 inset,
+				0 1px #eee;
+}
+
+button:hover,
+button:focus {
+	color: #1E90FF;
+}
+
+button:active {
+	color: #aaa;
+	background: #eee;
+}
+
+button::-moz-focus-inner {
+	border: 0;
+}
+
+button.selected {
+	color: #fff;
+	background: #1E90FF;
+}
+
+.fx button.selected {
+	box-shadow: 0 0 0 1px #0069D0 inset,
+				0 0 0 2px #1E90FF inset,
+				0 -5px 30px #0069D0 inset;
+}
+
+.close {
+	float: right;
+}
+
+.no-select {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.mine-link {
+	position: absolute;
+	top: 0;
+	left: 0;
+	opacity: 0;
+	visibility: hidden;
+	margin-top: 35px;
+	margin-left: 35px;
+}
+
+.fx .mine-link {
+	transition: opacity 0.3s;
+	-webkit-transition: opacity 0.3s;
+}
+
+
+.mine-link:not(.visible):not(:hover) {
+	height: 0;
+	padding: 0;
+	overflow: hidden;
+}
+
+.mine-link.visible,
+.mine-link:hover {
+	opacity: 1;
+	visibility: visible;
+	height: auto;
+}
+
+
+.mine-link .label,
+.mine-link .label-selected {
+	display: none;
+}
+
+.mine-link:not(.selected):hover .label,
+.mine-link.selected:hover .label-selected {
+	display: inline;
+}
+
+.mine-mode .celula.hidden.normal:hover {
+	border: 2px solid #FF9348;
+	background: #FFFFFF;
+}
+
+.fx .mine-mode .celula.hidden.normal:hover {
+	border: 2px solid #f7f7f7;
+	background: #FFFFFF;
+	box-shadow: 0 0 0 5px rgba(255,105,0,0.5) inset,
+				0 0 10px 0px #fff inset,
+				0 -10px 20px 0px #ddd inset;
+}
+
+.mine-mode .mine-link {
+	display: none;
+}
+
+#mineFindLink {
+	display: none;
+	margin: 10px 0 -10px
+}
+
+#mineFindLink.visible {
+	display: block;
+}
+
+.screenshot-canvas {
+	display: inline-block;
+	margin: 0 auto;
+	padding: 15px;
+	margin: 10px;
+	background: #fff;
+	border: 1px solid #eee;
+}
+
+.screenshot-canvas:hover {
+	background: #f5f5f5;
+}
+
+.screenshot-canvas img {
+	width: 300px;
+}
+
+.fx .screenshot-canvas {
+	border: 1px solid #fff;
+	box-shadow: 0 2px 5px rgba(0,0,0,0.2),
+				0 0 10px rgba(0,0,0,0.05) inset;
+	transition: background 0.35s;
+	-webkit-transition: background 0.35s;
+}
+
+.help-matrix {
+	font-size: 16px;
+	color: #666;
+	background: #D4D4D4;
+	margin: 10px auto;
+	padding: 15px;
+	border-radius: 5px;
+	white-space: nowrap;
+	line-height: 50px;
+}
+
